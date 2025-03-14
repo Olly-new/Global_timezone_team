@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Timezone Conversion Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background-color: #4a86e8;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .time-table {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      min-width: 120px;
+    }
+    th {
+      background-color: #f2f2f2;
+      position: sticky;
+      top: 0;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .working {
+      background-color: #d9ead3;
+    }
+    .non-working {
+      background-color: #f3f3f3;
+    }
+    .check {
+      color: green;
+      font-size: 1.2em;
+    }
+    .moon {
+      color: #666;
+      font-size: 1.2em;
+    }
+    .legend {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+    }
+    .member-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+    .member-card {
+      background-color: #f0f7ff;
+      padding: 10px;
+      border-radius: 4px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .current-time {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #e8f0fe;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    h1 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Team Timezone Conversion Calendar</h1>
+    </div>
+    
+    <div class="current-time" id="currentTimeDisplay">
+      Current time: Loading...
+    </div>
+    
+    <div class="member-info">
+      <div class="member-card">
+        <strong>Olly (Singapore)</strong><br>
+        GMT+8<br>
+        Working hours: 11:00 AM - 12:00 AM
+      </div>
+      <div class="member-card">
+        <strong>Karina (Bangkok)</strong><br>
+        GMT+7<br>
+        Working hours: 12:00 PM - 12:00 AM
+      </div>
+      <div class="member-card">
+        <strong>Dasha (Yerevan)</strong><br>
+        GMT+4<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Stacey (Moscow)</strong><br>
+        GMT+3<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Polina, Nikita (Belgrade)</strong><br>
+        GMT+1<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Valeria (Barcelona)</strong><br>
+        GMT+1<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Denis (Montenegro)</strong><br>
+        GMT+1<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Alex (Lisbon)</strong><br>
+        GMT+0<br>
+        Working hours: 9:00 AM - 8:00 PM
+      </div>
+      <div class="member-card">
+        <strong>Polinett (Mexico City)</strong><br>
+        GMT-6<br>
+        Working hours: 7:00 AM - 10:00 PM
+      </div>
+    </div>
+    
+    <div class="time-table">
+      <table id="timezoneTable">
+        <thead>
+          <tr>
+            <th>Hour (GMT)</th>
+            <th>Singapore<br>Olly<br>(GMT+8)</th>
+            <th>Bangkok<br>Karina<br>(GMT+7)</th>
+            <th>Yerevan<br>Dasha<br>(GMT+4)</th>
+            <th>Moscow<br>Stacey<br>(GMT+3)</th>
+            <th>Belgrade<br>Polina, Nikita<br>(GMT+1)</th>
+            <th>Barcelona<br>Valeria<br>(GMT+1)</th>
+            <th>Montenegro<br>Denis<br>(GMT+1)</th>
+            <th>Lisbon<br>Alex<br>(GMT+0)</th>
+            <th>Mexico City<br>Polinett<br>(GMT-6)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be filled by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="legend">
+      <strong>Legend:</strong>
+      <ul>
+        <li>✅ = Working hours</li>
+        <li>🌙 = Outside working hours</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Define timezone offsets and working hours
+    const teamMembers = [
+      { name: 'Olly', location: 'Singapore', offset: 8, workStart: 11, workEnd: 24 },
+      { name: 'Karina', location: 'Bangkok', offset: 7, workStart: 12, workEnd: 24 },
+      { name: 'Dasha', location: 'Yerevan', offset: 4, workStart: 9, workEnd: 20 },
+      { name: 'Stacey', location: 'Moscow', offset: 3, workStart: 9, workEnd: 20 },
+      { name: 'Polina/Nikita', location: 'Belgrade', offset: 1, workStart: 9, workEnd: 20 },
+      { name: 'Valeria', location: 'Barcelona', offset: 1, workStart: 9, workEnd: 20 },
+      { name: 'Denis', location: 'Montenegro', offset: 1, workStart: 9, workEnd: 20 },
+      { name: 'Alex', location: 'Lisbon', offset: 0, workStart: 9, workEnd: 20 },
+      { name: 'Polinett', location: 'Mexico City', offset: -6, workStart: 7, workEnd: 22 }
+    ];
+
+    // Generate table rows
+    function generateTable() {
+      const tbody = document.querySelector('#timezoneTable tbody');
+      tbody.innerHTML = '';
+      
+      for (let gmtHour = 0; gmtHour < 24; gmtHour++) {
+        const row = document.createElement('tr');
+        
+        // GMT hour cell
+        const gmtCell = document.createElement('td');
+        gmtCell.textContent = `${gmtHour.toString().padStart(2, '0')}:00`;
+        row.appendChild(gmtCell);
+        
+        // Create cells for each team member
+        for (const member of teamMembers) {
+          const cell = document.createElement('td');
+          
+          // Calculate local time for this team member
+          const localHour = (gmtHour + member.offset + 24) % 24;
+          cell.textContent = `${localHour.toString().padStart(2, '0')}:00`;
+          
+          // Check if this is within working hours
+          let isWorking = false;
+          if (member.workEnd > member.workStart) {
+            // Normal working hours in the same day
+            isWorking = (localHour >= member.workStart && localHour < member.workEnd);
+          } else {
+            // Working hours span midnight
+            isWorking = (localHour >= member.workStart || localHour < member.workEnd);
+          }
+          
+          if (isWorking) {
+            cell.classList.add('working');
+            cell.innerHTML += '<br><span class="check">✅</span>';
+          } else {
+            cell.classList.add('non-working');
+            cell.innerHTML += '<br><span class="moon">🌙</span>';
+          }
+          
+          row.appendChild(cell);
+        }
+        
+        tbody.appendChild(row);
+      }
+    }
+    
+    // Function to highlight the current time row
+    function highlightCurrentTime() {
+      const now = new Date();
+      const gmtHour = (now.getUTCHours()) % 24;
+      
+      // Remove previous highlights
+      const allRows = document.querySelectorAll('#timezoneTable tbody tr');
+      allRows.forEach(row => row.style.backgroundColor = '');
+      
+      // Add highlight
+      allRows[gmtHour].style.backgroundColor = '#fffde7';
+      
+      // Update the current time display
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+      };
+      document.getElementById('currentTimeDisplay').textContent = 
+        `Current time: ${now.toLocaleDateString(undefined, options)}`;
+    }
+
+    // Initialize the table
+    generateTable();
+    highlightCurrentTime();
+    
+    // Update the current time highlight every minute
+    setInterval(highlightCurrentTime, 60000);
+  </script>
+</body>
+</html>

@@ -27,6 +27,9 @@
     }
     .time-table {
       overflow-x: auto;
+      max-height: 600px; /* Set a max height to enable vertical scrolling */
+      overflow-y: auto;
+      position: relative; /* For the sticky positioning */
     }
     table {
       width: 100%;
@@ -42,6 +45,8 @@
       background-color: #f2f2f2;
       position: sticky;
       top: 0;
+      z-index: 10; /* Ensure the header appears above content while scrolling */
+      box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Add subtle shadow for separation */
     }
     tr:nth-child(even) {
       background-color: #f9f9f9;
@@ -252,7 +257,14 @@
       allRows.forEach(row => row.style.backgroundColor = '');
       
       // Add highlight
-      allRows[gmtHour].style.backgroundColor = '#fffde7';
+      if (allRows[gmtHour]) {
+        allRows[gmtHour].style.backgroundColor = '#fffde7';
+        
+        // Scroll to current time row (with some offset to show context)
+        const scrollContainer = document.querySelector('.time-table');
+        const rowTop = allRows[gmtHour].offsetTop;
+        scrollContainer.scrollTop = Math.max(0, rowTop - 200);
+      }
       
       // Update the current time display
       const options = { 
